@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Image Enhancer</title>
+</head>
+<body>
+    <h2>Upload Image to Enhance (4x)</h2>
+    <input type="file" id="imageInput" accept="image/*">
+    <button onclick="uploadImage()">Enhance</button>
+
+    <div id="result" style="margin-top: 20px;"></div>
+
+    <script>
+        async function uploadImage() {
+            const input = document.getElementById('imageInput');
+            if (!input.files.length) {
+                alert("Please select an image");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", input.files[0]);
+
+            const response = await fetch("/enhance", {
+                method: "POST",
+                body: formData
+            });
+
+            if (!response.ok) {
+                alert("Image enhancement failed.");
+                return;
+            }
+
+            const blob = await response.blob();
+            const imageUrl = URL.createObjectURL(blob);
+
+            document.getElementById("result").innerHTML = `
+                <p>Enhanced Image:</p>
+                <img src="${imageUrl}" style="max-width: 400px;"><br><br>
+                <a href="${imageUrl}" download="enhanced.png">
+                    <button>Download Enhanced Image</button>
+                </a>
+            `;
+        }
+    </script>
+</body>
+</html>
